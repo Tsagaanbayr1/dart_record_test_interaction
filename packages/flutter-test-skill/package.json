@@ -1,0 +1,30 @@
+{
+  "name": "@flutter-test-interaction/skill",
+  "version": "0.1.0",
+  "description": "AI skill for reviewing Flutter apps and generating integration tests from recorded interactions. Installable via npx.",
+  "bin": {
+    "flutter-test-skill": "bin/cli.js"
+  },
+  "files": [
+    "bin/",
+    "skill/",
+    "templates/",
+    "src/",
+    "README.md"
+  ],
+  "scripts": {
+    "start": "node bin/cli.js"
+  },
+  "keywords": [
+    "flutter",
+    "integration-test",
+    "ai-skill",
+    "test-recording",
+    "flutter-test",
+    "codex",
+    "claude",
+    "copilot"
+  ],
+  "license": "MIT",
+  "type": "module"
+}

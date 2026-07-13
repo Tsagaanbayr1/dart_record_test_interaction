@@ -1,0 +1,25 @@
+name: example
+description: Example app demonstrating flutter_interaction_recorder with Patrol support
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_interaction_recorder:
+    path: ../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  patrol: ^4.7.0
+
+flutter:
+  uses-material-design: true
