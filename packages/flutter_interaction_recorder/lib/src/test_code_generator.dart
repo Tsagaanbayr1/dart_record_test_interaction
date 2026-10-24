@@ -433,7 +433,7 @@ class TestCodeGenerator {
           buf.writeln("    await tester.pumpAndSettle();");
           break;
         case InteractionEventType.navigation:
-          buf.writeln("    // Navigate to ${event.destinationPage}");
+          buf.writeln("    // Navigate to ${_commentText(event.destinationPage)}");
           buf.writeln("    await tester.pumpAndSettle();");
           break;
         case InteractionEventType.backNavigation:
@@ -478,7 +478,7 @@ class TestCodeGenerator {
           buf.writeln("    await \$.pumpAndSettle();");
           break;
         case InteractionEventType.navigation:
-          buf.writeln("    // Navigate to ${event.destinationPage}");
+          buf.writeln("    // Navigate to ${_commentText(event.destinationPage)}");
           buf.writeln("    await \$.pumpAndSettle();");
           break;
         case InteractionEventType.backNavigation:
@@ -494,10 +494,44 @@ class TestCodeGenerator {
 
   // ── Helpers ─────────────────────────────────────────────────
 
-  String _keyExpr(String testId) => "const ValueKey('${keyPrefix}$testId')";
+  String _keyExpr(String testId) =>
+      "const ValueKey('${_escapeString('$keyPrefix$testId')}')";
 
-  String _escapeString(String s) =>
-      s.replaceAll("'", r"\'").replaceAll('\n', r'\n');
+  /// Escapes [s] for use inside a single-quoted Dart string literal.
+  ///
+  /// Recorded values come from a recording file, so every character that
+  /// could end the literal or start an interpolation is escaped: the
+  /// backslash, the quote, `$`, and control characters.
+  String _escapeString(String s) {
+    final buf = StringBuffer();
+    for (final rune in s.runes) {
+      switch (rune) {
+        case 0x5C: // \
+          buf.write(r'\\');
+        case 0x27: // '
+          buf.write(r"\'");
+        case 0x24: // $
+          buf.write(r'\$');
+        case 0x0A:
+          buf.write(r'\n');
+        case 0x0D:
+          buf.write(r'\r');
+        case 0x09:
+          buf.write(r'\t');
+        default:
+          if (rune < 0x20 || rune == 0x7F) {
+            buf.write('\\u{${rune.toRadixString(16)}}');
+          } else {
+            buf.writeCharCode(rune);
+          }
+      }
+    }
+    return buf.toString();
+  }
+
+  /// Text for a `//` comment: a line break would end the comment early.
+  String _commentText(String? s) =>
+      (s ?? '').replaceAll(RegExp('[\r\n\u2028\u2029]+'), ' ');
 
   String _toPascalCase(String s) {
     final words = s.replaceAll(RegExp(r'[^a-zA-Z0-9 ]'), ' ').split(RegExp(r'\s+'));
@@ -508,7 +542,11 @@ class TestCodeGenerator {
 
   String _toCamelCase(String s) {
     final pascal = _toPascalCase(s);
-    if (pascal.isEmpty) return s;
+    // No ASCII letters or digits to build a name from (e.g. a Cyrillic test
+    // ID): derive a stable, valid identifier instead of using [s] as code.
+    if (pascal.isEmpty) {
+      return 'field${s.runes.map((r) => r.toRadixString(16)).join('_')}';
+    }
     return pascal[0].toLowerCase() + pascal.substring(1);
   }
 

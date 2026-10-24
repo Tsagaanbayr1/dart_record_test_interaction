@@ -3,6 +3,10 @@
 - Security: an obscured (password) field's value is no longer recorded. Its
   `textInput` event keeps `obscureText: true` with no `textValue`, and loading a
   recording written by 0.1.0 drops any stored value.
+- Security: `TestCodeGenerator` escapes recorded strings fully (backslash,
+  quote, `$`, control characters) in string literals and `ValueKey`s, keeps
+  route names on their comment line, and never uses a test ID as an
+  identifier when it has no ASCII letters or digits.
 
 ## 0.1.0
 
