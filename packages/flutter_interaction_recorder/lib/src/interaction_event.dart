@@ -32,6 +32,9 @@ class InteractionEvent {
   final String? testId;
 
   /// Text that was entered (for [InteractionEventType.textInput] only).
+  ///
+  /// Always null for an obscured (password) field: the value is never kept,
+  /// so it cannot reach the recording file, an export, or an AI agent.
   final String? textValue;
 
   /// Whether the text field was an obscured (password) field.
@@ -95,7 +98,7 @@ class InteractionEvent {
         page: page,
         type: InteractionEventType.textInput,
         testId: testId,
-        textValue: text,
+        textValue: obscureText ? null : text,
         obscureText: obscureText,
       );
 
@@ -162,13 +165,15 @@ class InteractionEvent {
       orElse: () => InteractionEventType.tap,
     );
 
+    final obscureText = (json['obscureText'] as bool?) ?? false;
     return InteractionEvent(
       timestamp: Duration(milliseconds: (json['timestampMs'] as num).toInt()),
       page: json['page'] as String,
       type: type,
       testId: json['testId'] as String?,
-      textValue: json['textValue'] as String?,
-      obscureText: (json['obscureText'] as bool?) ?? false,
+      // Recordings written before 0.1.1 stored obscured values; drop them.
+      textValue: obscureText ? null : json['textValue'] as String?,
+      obscureText: obscureText,
       startX: (json['startX'] as num?)?.toDouble(),
       startY: (json['startY'] as num?)?.toDouble(),
       endX: (json['endX'] as num?)?.toDouble(),
