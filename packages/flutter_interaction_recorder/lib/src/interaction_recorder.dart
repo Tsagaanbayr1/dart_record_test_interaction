@@ -151,7 +151,8 @@ class InteractionRecorder {
 
   /// Called by [TestIdTextField] when text changes.
   void onTextChanged(String testId, String text, bool obscureText) {
-    _textValues[testId] = text;
+    // An obscured field's value is never held, even in memory.
+    _textValues[testId] = obscureText ? '' : text;
     _obscureFields[testId] = obscureText;
     if (_state != RecorderState.recording) return;
     // We do NOT record every keystroke. The final value is recorded

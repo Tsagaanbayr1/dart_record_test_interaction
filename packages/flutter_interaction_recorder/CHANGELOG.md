@@ -1,3 +1,9 @@
+## 0.1.1
+
+- Security: an obscured (password) field's value is no longer recorded. Its
+  `textInput` event keeps `obscureText: true` with no `textValue`, and loading a
+  recording written by 0.1.0 drops any stored value.
+
 ## 0.1.0
 
 - Initial release

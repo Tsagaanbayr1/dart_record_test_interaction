@@ -1,6 +1,6 @@
 name: flutter_interaction_recorder
 description: A Flutter package that records user interactions with test IDs and generates integration test code. Overlay a record button on any app, capture every tap, text input, and navigation, then export reusable, componentized test flows.
-version: 0.1.0
+version: 0.1.1
 homepage: https://github.com/your-org/flutter_interaction_recorder
 repository: https://github.com/your-org/flutter_interaction_recorder
 
